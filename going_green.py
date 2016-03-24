@@ -8,12 +8,12 @@
 # Ivan Boatwright
 # March 24, 2016
 
-def main():
+def main(debug=False):
     # Declare local variables/constants
     endProgram = 'no'
     MONTHS = ('January', 'February', 'March', 'April', 'May', 'June', 'July',
               'August', 'September', 'October', 'November', 'December')
-    HEADERS = ('SAVINGS', 'NOT GREEN', 'GONE GREEN', 'MONTH')
+    HEADERS = ('SAVINGS', 'NOT GREEN', 'GONE GREEN', '  MONTH')
 
 
     # Displays an introduction to the program and describes what it does.
@@ -21,21 +21,29 @@ def main():
 
     # The program will continue looping until the user sets
     #   endProgram == 'yes' when prompted.
-    while endProgram.lower() in ['no', '']:
+    while endProgram.lower() in ['no', 'n', '']:
         notGreenCost = []
         goneGreenCost = []
         savings = []
         report = ''
-        reportDesign = ' {:<18}{:>18}{:>18}{:<18}\n'
+        headDesign = '{0:^4}{{0:>10}}{0:^6}{{1:>10}}{0:^6}{{2:>10}}' \
+                     '{0:^6}{{3:<8}}\n'.format('')
+        reportDesign = '{0:^3}{{0:>10}}{0:^6}{{1:>10}}{0:^6}{{2:>10}}' \
+                       '{0:^8}{{3:<8}}\n'.format('')
 
-        # Function calls.
-        get_not_green(notGreenCost, MONTHS)
-        get_gone_green(goneGreenCost, MONTHS)
+        if not debug:
+            # Function calls.
+            get_not_green(notGreenCost, MONTHS)
+            get_gone_green(goneGreenCost, MONTHS)
+        else:
+            notGreenCost = generate_numbers()
+            goneGreenCost = generate_numbers()
+
         energy_saved(notGreenCost, goneGreenCost, savings)
 
         # Generate a printable report.
-        report = get_report(HEADERS[0], HEADERS, reportDesign, notGreenCost,
-                            goneGreenCost, savings, MONTHS)
+        report = get_report(HEADERS[0], HEADERS, headDesign, reportDesign,
+                            savings, notGreenCost, goneGreenCost, MONTHS)
 
         # Display the report.
         display_results(report)
@@ -46,12 +54,12 @@ def main():
 
         # If the user enters anything other than 'yes', 'no' or enter this
         #   loop requests new/valid input.
-        while endProgram.lower() not in ['yes', 'no', '']:
+        while endProgram.lower() not in ['yes', 'y', 'no', 'n', '']:
             print('Error: Invalid entry.')
             endProgram = input("Do you want to end program? yes or "
-                               "(n)o\n    >>>")
+                               "(n)o\n    >>> ")
     # End main and say good-bye.
-    print('{:>80}'.format('fin.'))
+    print('{:>64}'.format('fin.'))
     return None
 
 # todo: add welcome message for fluffy()
@@ -84,37 +92,37 @@ def energy_saved(ngc, ggc, sav):
 #   a value for that month.  The value is assigned to the reference array
 #   with the same index as that month.
 def monthly_values(months, name, vArray):
-    print('{}\nPlease enter the {} for each month.\n'.format('_' * 41, name))
+    print('{}\nPlease enter the {} for each month.\n'.format('_' * 79, name))
     for month in months:
-        vArray.append(float(input('{}:  '.format(month))))
+        vArray.append(int(input('{}:  '.format(month))))
     return None
 
 
 # comments
-def moneyfy(*vArrays):
-    for vArray in vArrays:
-        vArray[:] = ['${}'.format(v) for v in vArray]
+def moneyfy(*vArs):
+    for vA in vArs:
+        vA[:] = ['${}'.format(v) if v>0 else '-${}'.format(abs(v)) for v in vA]
     return None
 
 
 # Takes a title, a set of headers, a merged parallel array and
 #   a format string and returns a print friendly string.
-def tablefy(title, headers, design, data):
-    title = '{0}\n\n{1:^80}\n{2}\n'.format('-' * 80, title, '_' * 80)
-    head = design.format('',*headers)
-    division = '{}{}\n'.format(' '*10,'_'*60)
+def tablefy(title, headers, hdesign, design, data):
+    title = '{0:-<62}\n\n{1:^67}\n{0:_<62}\n'.format('    ', title)
+    head = hdesign.format(*headers)
+    division = '{0:4}{0:_<58}\n'.format('')
     body = ''.join([design.format(j[0], j[1], j[2], j[3]) for j in data])
     return '{}{}{}{}'.format(title, head, division, body)
 
 
 # comments
-def get_report(title, headers, design, *data):
+def get_report(title, headers, hdesign, design, *data):
     # Using moneyfy to turn all the integer values into strings with
     #   dollar signs.
-    moneyfy(data[:-1])
+    moneyfy(*data[:-1])
 
     # comments
-    return tablefy(title, headers, design, zip(*data))
+    return tablefy(title, headers, hdesign, design, zip(*data))
 
 
 # display_results is passed values used in print statements to display
@@ -123,3 +131,12 @@ def display_results(report):
     print(report)
     return None
 
+################DEBUG CODE##################
+def generate_numbers(rMin=1, rMax=999, xNums=12):
+    from random import sample
+    # Uses the sample function from the random module to generate a list of
+    #   integers.  The range function is used with the min and max variables
+    #   to set the possible integer values generated.
+    return sample(range(rMin, rMax), xNums)
+
+main(True)
