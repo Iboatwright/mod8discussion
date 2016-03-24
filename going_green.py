@@ -22,6 +22,7 @@ def main(debug=False):
     # The program will continue looping until the user sets
     #   endProgram == 'yes' when prompted.
     while endProgram.lower() in ['no', 'n', '']:
+        # Declare/reset local variables on each iteration of the while loop.
         notGreenCost = []
         goneGreenCost = []
         savings = []
@@ -31,6 +32,8 @@ def main(debug=False):
         reportDesign = '{0:^3}{{0:>10}}{0:^6}{{1:>10}}{0:^6}{{2:>10}}' \
                        '{0:^8}{{3:<8}}\n'.format('')
 
+        # If main is passed True as an argument the normal input functions
+        #   are bypassed and those lists are populated with random integers.
         if not debug:
             # Function calls.
             get_not_green(notGreenCost, MONTHS)
@@ -39,6 +42,7 @@ def main(debug=False):
             notGreenCost = generate_numbers()
             goneGreenCost = generate_numbers()
 
+        # Calculate savings and assign values by reference.
         energy_saved(notGreenCost, goneGreenCost, savings)
 
         # Generate a printable report.
@@ -50,23 +54,25 @@ def main(debug=False):
 
         # User is given the option to end the program loop by entering 'yes'.
         #   The user can enter 'no' or press enter to start a new loop.
-        endProgram = input("Do you want to end program? yes or (n)o\n    >>>")
+        endProgram = input("Do you want to end program? yes or (n)o\n   >>> ")
 
-        # If the user enters anything other than 'yes', 'no' or enter this
-        #   loop requests new/valid input.
+        # If the user enters anything other than the list values this
+        #   loop requests new/valid input.  Note: '' == pressing enter.
         while endProgram.lower() not in ['yes', 'y', 'no', 'n', '']:
             print('Error: Invalid entry.')
             endProgram = input("Do you want to end program? yes or "
                                "(n)o\n    >>> ")
+
     # End main and say good-bye.
     print('{:>64}'.format('fin.'))
     return None
 
-# todo: add welcome message for fluffy()
 # Displays an introduction to the program and describes what it does.
 def fluffy_intro():
     print('Welcome to the Going Green program.\n'
-          '.\n')
+          'This program takes the monthly energy costs from the year prior\n'
+          'to going green and the year since going green.  It then calculates'
+          'the monthly savings and displays everything in a savings report.')
     return None
 
 
@@ -76,13 +82,15 @@ def get_not_green(ngc, months):
     return None
 
 
-# Requests the user input the notGreenCosts.
+# Requests the user input the goneGreenCosts.
 def get_gone_green(ggc, months):
     monthly_values(months, 'GONE GREEN energy costs', ggc)
     return None
 
 
-# Calculate the savings per month. explain
+# Calculate the savings per month. The savings list is passed by reference.
+#   The gone-green values are subtracted from the not-green values and each
+#   result is appended to the savings list.
 def energy_saved(ngc, ggc, sav):
     [sav.append(x[0] - x[1]) for x in zip(ngc, ggc)]
     return None
@@ -98,15 +106,17 @@ def monthly_values(months, name, vArray):
     return None
 
 
-# comments
+# moneyfy converts integer & float values in a variable number of lists
+#   to strings prepended with a $ sign.  If the value is negative the - sign
+#   is moved in front of the $ sign.
 def moneyfy(*vArs):
     for vA in vArs:
-        vA[:] = ['${}'.format(v) if v>0 else '-${}'.format(abs(v)) for v in vA]
+       vA[:] = ['${}'.format(v) if v>0 else '-${}'.format(abs(v)) for v in vA]
     return None
 
 
-# Takes a title, a set of headers, a merged parallel array and
-#   a format string and returns a print friendly string.
+# Takes a title, a set of headers, a header format string, a body format
+#   string, a merged parallel array and returns a print friendly string.
 def tablefy(title, headers, hdesign, design, data):
     title = '{0:-<62}\n\n{1:^67}\n{0:_<62}\n'.format('    ', title)
     head = hdesign.format(*headers)
@@ -115,13 +125,15 @@ def tablefy(title, headers, hdesign, design, data):
     return '{}{}{}{}'.format(title, head, division, body)
 
 
-# comments
+# get_report is an intermediary stage for generating and returning the
+#   report string.
 def get_report(title, headers, hdesign, design, *data):
     # Using moneyfy to turn all the integer values into strings with
     #   dollar signs.
     moneyfy(*data[:-1])
 
-    # comments
+    # tablefy returns the report as a string which is then passed back
+    #   to the calling module.
     return tablefy(title, headers, hdesign, design, zip(*data))
 
 
@@ -131,7 +143,11 @@ def display_results(report):
     print(report)
     return None
 
-################DEBUG CODE##################
+
+################ DEBUG CODE ##################
+# This isn't part of the assignment but I left it in for others to reference.
+#   I'm using it to populate the user input lists and bypass the need for me
+#   to input data, but still able to evaluate the results of the program.
 def generate_numbers(rMin=1, rMax=999, xNums=12):
     from random import sample
     # Uses the sample function from the random module to generate a list of
@@ -139,4 +155,6 @@ def generate_numbers(rMin=1, rMax=999, xNums=12):
     #   to set the possible integer values generated.
     return sample(range(rMin, rMax), xNums)
 
-main(True)
+
+# Call main.
+main()
