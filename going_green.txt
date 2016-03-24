@@ -1,0 +1,88 @@
+Lab 9.5 – Going Green
+---------------------
+Write the Flowchart, and Python code for the following programming problem
+    based on the pseudocode below.
+
+    Last year, a local college implemented rooftop gardens as a way to
+    promote energy efficiency and save money.  Write a program that will
+    allow the user to enter the energy bills from January to December for
+    the year prior to going green.  Next, allow the user to enter the
+    energy bills from January to December of the past year after going
+    green.  The program should calculate the energy difference from the
+    two years and display the two years worth of data, along with the
+    savings.
+
+Hints:  Create three arrays of size 12 each.  The first array will store the
+    first year of energy costs, the second array will store the second year
+    after going green, and the third array will store the difference.  Also,
+    create a string array that stores the month names.  These variables might
+    be defined as follows:
+
+    notGreenCost = [0] * 12
+    goneGreenCost = [0] * 12
+    savings = [0] * 12
+    months = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+              'August', 'September', 'October', 'November', 'December']
+---------------------
+
+
+Pseudocode
+----------
+Module main()
+	//Declare local variables
+	Declare endProgram = “no”
+	While endProgram == “no”
+		Declare Real notGreenCost[12]
+		Declare Real goneGreenCost[12]
+		Declare Real savings[12]
+        Declare String months[12] = “January”, “February”, “March”, “April”,
+                                    “May”, “June”, “July”, “August”, “September”,
+                                    “October”, “November”, “December”
+
+		//function calls
+		getNotGreen(notGreenCost, months)
+		getGoneGreen(goneGreenCost, months)
+		energySaved(notGreenCost, goneGreenCosts, savings)
+		displayInfo(notGreenCost, goneGreenCosts, savings, months)
+
+		Display “Do you want to end the program? Yes or no”
+		Input endProgram
+	End While
+End Module
+
+Module getNotGreen(Real notGreenCost[], String months[])
+	Set counter = 0
+	While counter < 12
+		Display “Enter NOT GREEN energy costs for”, months[counter]
+		Input notGreenCosts[counter]
+		Set counter = counter + 1
+	End While
+End Module
+
+Module getGoneGreen(Real goneGreenCost[], String months[])
+	Set counter = 0
+	While counter < 12
+		Display “Enter GONE GREEN energy costs for”, months[counter]
+		Input goneGreenCosts[counter]
+		Set counter = counter + 1
+	End While
+End Module
+
+Module energySaved(Real notGreenCost[], Real goneGreenCost[], Real savings[])
+	Set counter = 0
+	While counter < 12
+		Set savings[counter] = notGreenCost[counter] – goneGreenCost[counter]
+		Set counter = counter + 1
+	End While
+End Module
+
+Module displayInfo(Real notGreenCost[], Real goneGreenCost[], Real savings[], String months[])
+	Set counter = 0
+	While counter < 12
+		Display “Information for”, months[counter]
+		Display “Savings $”, savings[counter]
+		Display “Not Green Costs $”, notGreenCost[counter]
+		Display “Gone Green Costs $”, goneGreenCost[counter]
+		Set counter = counter + 1
+	End While
+End Module
