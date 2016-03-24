@@ -98,11 +98,17 @@ def energy_saved(ngc, ggc, sav):
 
 # Iterates through the list of months.  Each iteration has the user input
 #   a value for that month.  The value is assigned to the reference array
-#   with the same index as that month.
+#   with the same index as that month.  If an invalid integer is entered
+#   an error message is displayed and the user is prompted to try again.
 def monthly_values(months, name, vArray):
     print('{}\nPlease enter the {} for each month.\n'.format('_' * 79, name))
     for month in months:
-        vArray.append(int(input('{}:  '.format(month))))
+        while True:
+            try:
+                vArray.append(int(input('{}:  '.format(month))))
+                break
+            except:
+                print('Invalid entry. Try again.')
     return None
 
 
